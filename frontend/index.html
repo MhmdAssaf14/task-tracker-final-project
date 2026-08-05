@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Task Tracker</h1>
+      </div>
+      <button id="new-task-button" class="primary-button">+ New Task</button>
+    </header>
+
+    <main>
+      <section class="filters" aria-label="Task filters">
+        <label>
+          Status
+          <select id="status-filter">
+            <option value="">All</option>
+            <option value="to_do">To do</option>
+            <option value="in_progress">In progress</option>
+            <option value="done">Done</option>
+          </select>
+        </label>
+        <label>
+          Priority
+          <select id="priority-filter">
+            <option value="">All</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </label>
+        <label>
+          Tag
+          <input id="tag-filter" type="text" placeholder="e.g. backend" />
+        </label>
+        <label class="checkbox-label">
+          <input id="overdue-filter" type="checkbox" />
+          Overdue only
+        </label>
+        <button id="clear-filters-button" class="secondary-button" type="button">Clear filters</button>
+      </section>
+
+      <p id="error-message" class="error-message" role="alert" hidden></p>
+
+      <section class="board" aria-label="Task board">
+        <article class="column" data-status="to_do">
+          <header><h2>To do <span id="count-to_do">0</span></h2></header>
+          <div id="column-to_do" class="task-list" data-status="to_do"></div>
+        </article>
+        <article class="column" data-status="in_progress">
+          <header><h2>In progress <span id="count-in_progress">0</span></h2></header>
+          <div id="column-in_progress" class="task-list" data-status="in_progress"></div>
+        </article>
+        <article class="column" data-status="done">
+          <header><h2>Done <span id="count-done">0</span></h2></header>
+          <div id="column-done" class="task-list" data-status="done"></div>
+        </article>
+      </section>
+    </main>
+
+    <dialog id="task-modal">
+      <form id="task-form" method="dialog">
+        <div class="modal-header">
+          <h2 id="modal-title">New task</h2>
+          <button id="close-modal-button" class="icon-button" type="button" aria-label="Close">×</button>
+        </div>
+
+        <input id="task-id" type="hidden" />
+
+        <label>
+          Title <span aria-hidden="true">*</span>
+          <input id="task-title" type="text" required maxlength="120" />
+        </label>
+        <label>
+          Description
+          <textarea id="task-description" rows="3"></textarea>
+        </label>
+        <div class="form-row">
+          <label>
+            Status
+            <select id="task-status">
+              <option value="to_do">To do</option>
+              <option value="in_progress">In progress</option>
+              <option value="done">Done</option>
+            </select>
+          </label>
+          <label>
+            Priority
+            <select id="task-priority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Assignee
+          <input id="task-assignee" type="text" maxlength="80" />
+        </label>
+        <label>
+          Due date
+          <input id="task-due-date" type="date" />
+        </label>
+        <label>
+          Tags
+          <input id="task-tags" type="text" placeholder="backend, urgent" />
+          <small>Comma-separated, up to 5 tags.</small>
+        </label>
+
+        <div class="modal-actions">
+          <button id="delete-task-button" class="danger-button" type="button" hidden>Delete</button>
+          <div class="spacer"></div>
+          <button class="secondary-button" type="button" id="cancel-button">Cancel</button>
+          <button class="primary-button" type="submit">Save task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
