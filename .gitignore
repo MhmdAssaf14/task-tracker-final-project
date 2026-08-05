@@ -2,9 +2,18 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
 .venv/
 venv/
+
+# Environment files
 .env
+.env.*
+!.env.example
 
 # Node / frontend tooling
 node_modules/
