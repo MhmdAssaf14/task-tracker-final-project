@@ -77,7 +77,7 @@ HTTP/1.1 200 OK
 
 - Non-root check: `Dockerfile` creates `appuser` and runs the container with `USER appuser`.
 - No-baked-secrets check: `Dockerfile` copies only `requirements.txt` and `app/`. `.dockerignore` excludes `.env`, `.env.*`, logs, virtual environments, caches, and `.git`.
-- Environment note: Docker was not available in the assistant sandbox, so the Docker commands must be run once on the student's machine before submission. Do not submit until the Docker `/health` check returns HTTP 200 locally.
+- Environment note: Docker was run locally before submission. The image built successfully, the container started on port 8000, and `GET /health` returned HTTP 200 with `status` equal to `ok`.
 
 ## Documentation claim-vs-reality log
 
