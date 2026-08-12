@@ -44,6 +44,47 @@ def test_invalid_status_transition_is_rejected(client):
     assert "not allowed" in response.json()["detail"]
 
 
+def test_patch_title_null_is_rejected_without_corrupting_task(client):
+    created = client.post("/tasks", json={"title": "Original title"}).json()
+
+    response = client.patch(f"/tasks/{created['id']}", json={"title": None})
+
+    assert response.status_code == 422
+
+    tasks = client.get("/tasks")
+    assert tasks.status_code == 200
+    assert tasks.json()[0]["title"] == "Original title"
+
+    fetched = client.get(f"/tasks/{created['id']}")
+    assert fetched.status_code == 200
+    assert fetched.json()["title"] == "Original title"
+
+
+def test_patch_non_nullable_fields_reject_null_without_corrupting_task(client):
+    created = client.post(
+        "/tasks",
+        json={
+            "title": "Keep valid",
+            "description": "Original description",
+            "assignee": "Ada",
+            "tags": ["backend"],
+        },
+    ).json()
+
+    for field_name in ("description", "status", "priority", "assignee", "tags"):
+        response = client.patch(f"/tasks/{created['id']}", json={field_name: None})
+        assert response.status_code == 422
+
+        fetched = client.get(f"/tasks/{created['id']}")
+        assert fetched.status_code == 200
+        assert fetched.json()["title"] == "Keep valid"
+        assert fetched.json()["description"] == "Original description"
+        assert fetched.json()["status"] == "to_do"
+        assert fetched.json()["priority"] == "medium"
+        assert fetched.json()["assignee"] == "Ada"
+        assert fetched.json()["tags"] == ["backend"]
+
+
 def test_delete_task_then_get_returns_404(client):
     created = client.post("/tasks", json={"title": "Delete me"}).json()
 

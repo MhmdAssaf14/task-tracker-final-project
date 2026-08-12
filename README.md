@@ -74,7 +74,7 @@ python -m pytest -q
 Current local verification result recorded during final packaging:
 
 ```text
-14 passed
+16 passed
 ```
 
 ### How to run with Docker

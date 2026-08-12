@@ -27,17 +27,18 @@ python -m pytest -q
 - Test result:
 
 ```text
-14 passed in 0.11s
+16 passed, 1 warning in 0.17s
 ```
 
 ## Scope control
 
-No new product feature was added during the final project. The only `app/` change was a small security-supported correction recorded in `docs/final-ai-review.md`: CORS was narrowed to local frontend origins and an unused hidden test reset endpoint was removed.
+No new product feature was added during the final project. App changes stayed limited to release hardening and bug fixes: CORS was narrowed to local frontend origins, an unused hidden test reset endpoint was removed, and update validation now rejects explicit `null` for non-nullable PATCH fields before storage can be mutated.
 
 ## CI evidence
 
 - Workflow file: `.github/workflows/ci.yml`
-- Latest run link or note: After pushing the `final-project` branch, confirm the GitHub Actions `CI` workflow is green. Replace this note with the green run link before final submission if your LMS/instructor expects the link in the document.
+- CI run URL to paste after push: [USER MUST PASTE ACTUAL GREEN GITHUB ACTIONS RUN URL]
+- Trigger check: the workflow runs on pushes to `final-project`, `mid-course-project`, and `main`, and on pull requests.
 - Test command used by CI:
 
 ```bash
@@ -68,22 +69,27 @@ docker run --rm -p 8000:8000 task-tracker-final
 curl -i http://localhost:8000/health
 ```
 
-- Expected successful result:
+- Observed Docker `/health` result from local verification:
 
 ```text
 HTTP/1.1 200 OK
-{"status":"ok", ...}
+date: Wed, 12 Aug 2026 21:17:19 GMT
+server: uvicorn
+content-length: 62
+content-type: application/json
+
+{"status":"ok","timestamp":"2026-08-12T21:17:19.696311+00:00"}
 ```
 
 - Non-root check: `Dockerfile` creates `appuser` and runs the container with `USER appuser`.
 - No-baked-secrets check: `Dockerfile` copies only `requirements.txt` and `app/`. `.dockerignore` excludes `.env`, `.env.*`, logs, virtual environments, caches, and `.git`.
-- Environment note: Docker was run locally before submission. The image built successfully, the container started on port 8000, and `GET /health` returned HTTP 200 with `status` equal to `ok`.
+- Environment note: Docker was run locally before submission. The image built successfully, the container started on port 8000, `GET /health` returned HTTP 200 with `status` equal to `ok`, and the temporary `task-tracker-final-check` container was removed afterward.
 
 ## Documentation claim-vs-reality log
 
 | Claim checked | Evidence used | Result | Change made, if any |
 |---|---|---|---|
-| README says `python -m pytest -q` runs the test suite. | Ran `python -m pytest -q`. | Passed: `14 passed in 0.11s`. | README kept this exact command and result. |
+| README says `python -m pytest -q` runs the test suite. | Ran `.venv\Scripts\python -m pytest -q`. | Passed: `16 passed, 1 warning in 0.17s`. | Evidence updated with the current regression-test result. |
 | README says `/health` returns HTTP 200. | Started Uvicorn and ran `curl -i http://127.0.0.1:8006/health`. | Passed: HTTP 200 with `status` equal to `ok`. | README and evidence use the actual endpoint. |
 | CI runs pytest without dangerous shortcuts. | Inspected `.github/workflows/ci.yml`. | Passed: explicit Python `3.11`, dependency installation, direct pytest command, no `continue-on-error` or `|| true`. | No change after inspection. |
 | Docker image avoids copied secrets. | Inspected `Dockerfile` and `.dockerignore`. | Passed by file review: `.env` patterns are ignored and the image copies only runtime app files. | Kept Dockerfile minimal and used non-root `appuser`. |

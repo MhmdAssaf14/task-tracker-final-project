@@ -10,7 +10,7 @@
 
 ## AI code review mini-log
 
-Reviewed files: `.github/workflows/ci.yml`, `Dockerfile`, `.dockerignore`, `README.md`, and `app/main.py`.
+Reviewed files: `.github/workflows/ci.yml`, `Dockerfile`, `.dockerignore`, `README.md`, `app/main.py`, `app/models.py`, and `tests/test_baseline_api.py`.
 
 | AI comment | Grade: Useful / Noise / Wrong | Reason | Verification or decision |
 |---|---|---|---|
@@ -25,6 +25,7 @@ Reviewed files: `.github/workflows/ci.yml`, `Dockerfile`, `.dockerignore`, `READ
 |---|---|---|---|---|
 | CORS allowed all origins and credentials. | `app/main.py` previously used `allow_origins=["*"]` and `allow_credentials=True`. | Valid | Too broad even for a learning app and easy to narrow without changing product behavior. | Corrected to local frontend origins and `allow_credentials=False`. |
 | Hidden `/test/reset` route could clear all tasks if the app were exposed. | `app/main.py` previously included `@app.post("/test/reset", include_in_schema=False)`. | Valid | Tests reset storage directly through the fixture, so this route was not needed. | Removed the route as a small security-supported correction. |
+| Explicit `null` in PATCH could corrupt task records. | `app/models.py` allowed explicit `None` for non-nullable update fields and `app/storage.py` applied `exclude_unset=True` updates directly. | Valid | A rejected update should never write invalid values into storage or break later response validation. | Corrected `TaskUpdate` validation and added regression tests for `title: null` and other non-nullable fields. |
 | No authentication on task endpoints. | `app/main.py` routes are public. | False Positive | The course scope intentionally excludes authentication, user accounts, and multi-tenancy. | No change. Documented as out of scope, not a final-project gap. |
 | In-memory storage loses tasks on restart. | `app/storage.py` uses a module-level dictionary. | Noise | This is a known learning-project architecture choice, not a release security defect for this course. | No change. README describes the project as a learning Task Tracker. |
 
@@ -34,7 +35,7 @@ I manually checked the repository for committed secrets and local-only files. `.
 
 ## One AI output I rejected or corrected
 
-AI suggested adding authentication and a persistent database as part of “release hardening.” I rejected both suggestions because the final brief says not to add new product features and the original course scope excludes authentication and production database work. Instead, I limited final code changes to two small security-supported corrections: narrowing CORS and removing the unused test reset endpoint.
+AI suggested adding authentication and a persistent database as part of “release hardening.” I rejected both suggestions because the final brief says not to add new product features and the original course scope excludes authentication and production database work. Instead, I limited final code changes to small release-readiness corrections: narrowing CORS, removing the unused test reset endpoint, and fixing the explicit-null PATCH validation bug reported during review.
 
 ## Three AI usage rules
 

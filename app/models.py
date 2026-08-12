@@ -91,19 +91,17 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    title: str | None = None
-    description: str | None = None
-    status: TaskStatus | None = None
-    priority: TaskPriority | None = None
-    assignee: str | None = None
+    title: str = None
+    description: str = None
+    status: TaskStatus = None
+    priority: TaskPriority = None
+    assignee: str = None
     due_date: date | None = None
-    tags: list[str] | None = None
+    tags: list[str] = None
 
     @field_validator("title")
     @classmethod
-    def updated_title_must_not_be_blank(cls, value: str | None) -> str | None:
-        if value is None:
-            return value
+    def updated_title_must_not_be_blank(cls, value: str) -> str:
         title = value.strip()
         if not title:
             raise ValueError("title cannot be blank")
@@ -111,18 +109,16 @@ class TaskUpdate(BaseModel):
 
     @field_validator("description", "assignee", mode="before")
     @classmethod
-    def trim_optional_update_strings(cls, value: Any) -> str | None:
-        if value is None:
-            return value
+    def trim_optional_update_strings(cls, value: Any) -> str:
         if not isinstance(value, str):
             raise ValueError("value must be a string")
         return value.strip()
 
     @field_validator("tags", mode="before")
     @classmethod
-    def validate_update_tags(cls, value: Any) -> list[str] | None:
+    def validate_update_tags(cls, value: Any) -> list[str]:
         if value is None:
-            return value
+            raise ValueError("tags cannot be null")
         return _normalize_tags(value)
 
 
