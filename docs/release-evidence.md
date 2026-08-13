@@ -37,7 +37,11 @@ No new product feature was added during the final project. App changes stayed li
 ## CI evidence
 
 - Workflow file: `.github/workflows/ci.yml`
-- CI run URL to paste after push: [USER MUST PASTE ACTUAL GREEN GITHUB ACTIONS RUN URL]
+- CI run: `https://github.com/MhmdAssaf14/task-tracker-final-project/actions/runs/31641977746`
+- CI branch: `final-project`
+- CI commit: `6ce8411`
+- CI status: successful/green
+- CI duration: 17 seconds
 - Trigger check: the workflow runs on pushes to `final-project`, `mid-course-project`, and `main`, and on pull requests.
 - Test command used by CI:
 
